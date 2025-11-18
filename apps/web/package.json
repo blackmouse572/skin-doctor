@@ -16,6 +16,8 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
+    "@ai-sdk/react": "^2.0.94",
+    "@mastra/client-js": "^0.16.10",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-icons": "catalog:",
     "@repo/auth": "workspace:*",
@@ -25,7 +27,9 @@
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/router-devtools": "catalog:",
+    "ai": "^5.0.94",
     "dotenv-cli": "catalog:",
+    "framer-motion": "^12.23.24",
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

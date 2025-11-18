@@ -1,25 +1,23 @@
-import { Mastra } from "@mastra/core/mastra";
-import { PinoLogger } from "@mastra/loggers";
-import { LibSQLStore } from "@mastra/libsql";
-import { weatherWorkflow } from "./workflows/weather-workflow";
-import { weatherAgent } from "./agents/weather-agent";
+import { chatRoute } from '@mastra/ai-sdk';
+import { Mastra } from '@mastra/core/mastra';
+import { LibSQLStore } from '@mastra/libsql';
+import { PinoLogger } from '@mastra/loggers';
+import { ingredientAnalysisAgent } from './agents/ingredient-analysis-agent';
+import { routinePlanningAgent } from './agents/routine-planning-agent';
+import { skinAnalysisAgent } from './agents/skin-analysis-agent';
+import { skinConditionAgent } from './agents/skin-condition-agent';
+import { supervisorAgent } from './agents/supervisor-agent';
+import { skinAnalysisConfidenceScorer } from './scorers/skincare-scorers';
 import {
   toolCallAppropriatenessScorer,
   completenessScorer,
   translationScorer,
-} from "./scorers/weather-scorer";
-import { analyzeSkincareRoutineWorkflow } from "./workflows/skincare-analysis-workflow";
-import { skinAnalysisAgent } from "./agents/skin-analysis-agent";
-import { skinAnalysisConfidenceScorer } from "./scorers/skincare-scorers";
-import { supervisorAgent } from "./agents/supervisor-agent";
-import { skinConditionAgent } from "./agents/skin-condition-agent";
-import { routinePlanningAgent } from "./agents/routine-planning-agent";
-import { ingredientAnalysisAgent } from "./agents/ingredient-analysis-agent";
+} from './scorers/weather-scorer';
+import { analyzeSkincareRoutineWorkflow } from './workflows/skincare-analysis-workflow';
 
 export const mastra = new Mastra({
-  workflows: { weatherWorkflow, analyzeSkincareRoutineWorkflow },
+  workflows: { analyzeSkincareRoutineWorkflow },
   agents: {
-    weatherAgent,
     skinAnalysisAgent,
     supervisorAgent,
     skinConditionAgent,
@@ -34,11 +32,11 @@ export const mastra = new Mastra({
   },
   storage: new LibSQLStore({
     // stores observability, scores, ... into memory storage, if it needs to persist, change to file:../mastra.db
-    url: ":memory:",
+    url: ':memory:',
   }),
   logger: new PinoLogger({
-    name: "Mastra",
-    level: "info",
+    name: 'Mastra',
+    level: 'info',
   }),
   telemetry: {
     // Telemetry is deprecated and will be removed in the Nov 4th release
@@ -47,5 +45,14 @@ export const mastra = new Mastra({
   observability: {
     // Enables DefaultExporter and CloudExporter for AI tracing
     default: { enabled: true },
+  },
+  // Server configuration
+  server: {
+    apiRoutes: [
+      chatRoute({
+        path: '/chat',
+        agent: 'supervisorAgent',
+      }),
+    ],
   },
 });

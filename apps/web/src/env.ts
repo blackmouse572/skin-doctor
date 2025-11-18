@@ -16,6 +16,8 @@ export const envSchema = v.object({
     '/api',
   ),
 
+  PUBLIC_AI_API_URL: v.pipe(v.string(), v.url()),
+
   /**
    * Set this if you want to run or deploy your app at a base URL. This is
    * usually required for deploying a repository to Github/Gitlab pages.
