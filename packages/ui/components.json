@@ -9,9 +9,13 @@
     "baseColor": "zinc",
     "cssVariables": true
   },
+  "iconLibrary": "radix",
   "aliases": {
-    "ui": "src/components",
+    "components": "#/components",
     "utils": "#/lib/utils",
-    "components": "#/components"
+    "ui": "src/components"
+  },
+  "registries": {
+    "@coss": "https://coss.com/ui/r/{name}.json"
   }
 }

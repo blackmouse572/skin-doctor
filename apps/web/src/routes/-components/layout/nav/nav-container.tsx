@@ -6,8 +6,10 @@ export default function NavContainer({
   children?: ReactNode;
 }>) {
   return (
-    <div className="px-2 md:px-4 flex items-center justify-between text-lg bg-nav h-12">
-      {children}
+    <div className="flex h-16 w-full items-center justify-center bg-background md:h-18 border-b border-border">
+      <div className="flex w-full max-w-container justify-between pr-3 pl-4 md:px-8">
+        {children}
+      </div>
     </div>
   );
 }

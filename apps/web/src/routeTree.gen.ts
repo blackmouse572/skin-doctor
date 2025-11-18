@@ -15,6 +15,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as ProtectedPostsIndexRouteImport } from './routes/_protected/posts/index'
+import { Route as ProtectedChatIndexRouteImport } from './routes/_protected/chat/index'
+import { Route as ProtectedChatChatidRouteImport } from './routes/_protected/chat/$chatid'
 import { Route as ProtectedPostsPostidIndexRouteImport } from './routes/_protected/posts/$postid/index'
 
 const PublicLayoutRoute = PublicLayoutRouteImport.update({
@@ -45,6 +47,16 @@ const ProtectedPostsIndexRoute = ProtectedPostsIndexRouteImport.update({
   path: '/posts/',
   getParentRoute: () => ProtectedLayoutRoute,
 } as any)
+const ProtectedChatIndexRoute = ProtectedChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => ProtectedLayoutRoute,
+} as any)
+const ProtectedChatChatidRoute = ProtectedChatChatidRouteImport.update({
+  id: '/chat/$chatid',
+  path: '/chat/$chatid',
+  getParentRoute: () => ProtectedLayoutRoute,
+} as any)
 const ProtectedPostsPostidIndexRoute =
   ProtectedPostsPostidIndexRouteImport.update({
     id: '/posts/$postid/',
@@ -56,6 +68,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/chat/$chatid': typeof ProtectedChatChatidRoute
+  '/chat': typeof ProtectedChatIndexRoute
   '/posts': typeof ProtectedPostsIndexRoute
   '/posts/$postid': typeof ProtectedPostsPostidIndexRoute
 }
@@ -63,6 +77,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/chat/$chatid': typeof ProtectedChatChatidRoute
+  '/chat': typeof ProtectedChatIndexRoute
   '/posts': typeof ProtectedPostsIndexRoute
   '/posts/$postid': typeof ProtectedPostsPostidIndexRoute
 }
@@ -73,14 +89,30 @@ export interface FileRoutesById {
   '/_public': typeof PublicLayoutRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
+  '/_protected/chat/$chatid': typeof ProtectedChatChatidRoute
+  '/_protected/chat/': typeof ProtectedChatIndexRoute
   '/_protected/posts/': typeof ProtectedPostsIndexRoute
   '/_protected/posts/$postid/': typeof ProtectedPostsPostidIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/posts' | '/posts/$postid'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/chat/$chatid'
+    | '/chat'
+    | '/posts'
+    | '/posts/$postid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/posts' | '/posts/$postid'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/chat/$chatid'
+    | '/chat'
+    | '/posts'
+    | '/posts/$postid'
   id:
     | '__root__'
     | '/'
@@ -88,6 +120,8 @@ export interface FileRouteTypes {
     | '/_public'
     | '/_public/login'
     | '/_public/register'
+    | '/_protected/chat/$chatid'
+    | '/_protected/chat/'
     | '/_protected/posts/'
     | '/_protected/posts/$postid/'
   fileRoutesById: FileRoutesById
@@ -142,6 +176,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedPostsIndexRouteImport
       parentRoute: typeof ProtectedLayoutRoute
     }
+    '/_protected/chat/': {
+      id: '/_protected/chat/'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ProtectedChatIndexRouteImport
+      parentRoute: typeof ProtectedLayoutRoute
+    }
+    '/_protected/chat/$chatid': {
+      id: '/_protected/chat/$chatid'
+      path: '/chat/$chatid'
+      fullPath: '/chat/$chatid'
+      preLoaderRoute: typeof ProtectedChatChatidRouteImport
+      parentRoute: typeof ProtectedLayoutRoute
+    }
     '/_protected/posts/$postid/': {
       id: '/_protected/posts/$postid/'
       path: '/posts/$postid'
@@ -153,11 +201,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface ProtectedLayoutRouteChildren {
+  ProtectedChatChatidRoute: typeof ProtectedChatChatidRoute
+  ProtectedChatIndexRoute: typeof ProtectedChatIndexRoute
   ProtectedPostsIndexRoute: typeof ProtectedPostsIndexRoute
   ProtectedPostsPostidIndexRoute: typeof ProtectedPostsPostidIndexRoute
 }
 
 const ProtectedLayoutRouteChildren: ProtectedLayoutRouteChildren = {
+  ProtectedChatChatidRoute: ProtectedChatChatidRoute,
+  ProtectedChatIndexRoute: ProtectedChatIndexRoute,
   ProtectedPostsIndexRoute: ProtectedPostsIndexRoute,
   ProtectedPostsPostidIndexRoute: ProtectedPostsPostidIndexRoute,
 }

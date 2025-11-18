@@ -16,6 +16,7 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-icons": "catalog:",
     "@repo/auth": "workspace:*",
     "@repo/ui": "workspace:*",

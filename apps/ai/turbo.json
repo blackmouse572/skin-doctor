@@ -1,0 +1,19 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      "env": ["SERVER_*", "GOOGLE_GENERATIVE_AI_API_KEY"],
+      "inputs": ["$TURBO_DEFAULT$", ".env"],
+      "persistent": true
+    },
+    "build": {
+      "env": ["SERVER_*", "GOOGLE_GENERATIVE_AI_API_KEY"],
+      "inputs": ["$TURBO_DEFAULT$", ".env"]
+    },
+    "start": {
+      "env": ["SERVER_*", "GOOGLE_GENERATIVE_AI_API_KEY"],
+      "persistent": true
+    }
+  }
+}

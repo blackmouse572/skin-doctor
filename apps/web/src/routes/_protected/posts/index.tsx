@@ -10,7 +10,6 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  TooltipArrow,
   TooltipProvider,
 } from '@repo/ui/components/tooltip';
 import { useQuery } from '@tanstack/react-query';
@@ -112,34 +111,35 @@ function RouteComponent() {
 
       <div className="mt-4 flex justify-end items-center relative gap-x-2">
         <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild onClick={(e) => e.preventDefault()}>
-              <Button
-                variant="link"
-                className="w-12 border border-input hover:brightness-150"
-                onClick={() =>
-                  updateFilters(
-                    'sortDirection',
-                    search.sortDirection === 'asc' ? 'desc' : 'asc',
-                  )
-                }
-              >
-                {search.sortDirection === 'asc' ? (
-                  <ArrowUpIcon />
-                ) : (
-                  <ArrowDownIcon />
-                )}
-              </Button>
-            </TooltipTrigger>
+          <Tooltip delay={0}>
+            <TooltipTrigger
+              onClick={(e) => e.preventDefault()}
+              render={
+                <Button
+                  variant="link"
+                  className="w-12 border border-input hover:brightness-150"
+                  onClick={() =>
+                    updateFilters(
+                      'sortDirection',
+                      search.sortDirection === 'asc' ? 'desc' : 'asc',
+                    )
+                  }
+                >
+                  {search.sortDirection === 'asc' ? (
+                    <ArrowUpIcon />
+                  ) : (
+                    <ArrowDownIcon />
+                  )}
+                </Button>
+              }
+            ></TooltipTrigger>
             <TooltipContent
               side="top"
               align="center"
               sideOffset={4}
-              onPointerDownOutside={(e) => e.preventDefault()}
               className="bg-neutral-500 fill-neutral-500 duration-0"
             >
               <span>Sort by created date ({search.sortDirection})</span>
-              <TooltipArrow width={15} height={10} className="duration-0" />
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

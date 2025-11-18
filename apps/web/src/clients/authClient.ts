@@ -9,3 +9,7 @@ export const authClient = createAuthClient({
 export type AuthSession =
   | ReturnType<typeof createAuthClient>['$Infer']['Session']
   | null;
+
+export type AuthUser = ReturnType<
+  typeof createAuthClient
+>['$Infer']['Session']['user'];

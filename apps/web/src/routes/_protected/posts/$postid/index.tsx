@@ -5,7 +5,6 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  TooltipArrow,
 } from '@repo/ui/components/tooltip';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { apiClient } from '@/clients/apiClient';
@@ -23,12 +22,16 @@ export const Route = createFileRoute('/_protected/posts/$postid/')({
       <div className="flex flex-col items-center w-full gap-y-3">
         <div>{error.message}</div>
         <div className="flex gap-2">
-          <Button asChild variant="outline" className="w-full">
-            <Link {...postsLinkOptions}>
-              <ArrowLeftIcon />
-              Go Back
-            </Link>
-          </Button>
+          <Button
+            render={
+              <Link {...postsLinkOptions}>
+                <ArrowLeftIcon />
+                Go Back
+              </Link>
+            }
+            variant="outline"
+            className="w-full"
+          ></Button>
           <Button
             variant="secondary"
             onClick={() => {
@@ -61,19 +64,21 @@ function RouteComponent() {
       </div>
       <hr className="border border-gray-500 mt-3" />
 
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delay={0}>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              asChild
-              variant="link"
-              className="w-12 border border-gray-500 mt-4 md:mt-6 hover:brightness-150"
-            >
-              <Link {...postsLinkOptions}>
-                <ArrowLeftIcon />
-              </Link>
-            </Button>
-          </TooltipTrigger>
+          <TooltipTrigger
+            render={
+              <Button
+                render={
+                  <Link {...postsLinkOptions}>
+                    <ArrowLeftIcon />
+                  </Link>
+                }
+                variant="link"
+                className="w-12 border border-gray-500 mt-4 md:mt-6 hover:brightness-150"
+              ></Button>
+            }
+          ></TooltipTrigger>
           <TooltipContent
             side="right"
             align="center"
@@ -81,7 +86,6 @@ function RouteComponent() {
             className="bg-neutral-500 fill-neutral-500 duration-0"
           >
             <span>View all posts</span>
-            <TooltipArrow width={15} height={10} className="duration-0" />
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
