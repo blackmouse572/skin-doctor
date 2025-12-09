@@ -13,8 +13,8 @@ export const Route = createFileRoute('/_protected/chat/')({
 });
 
 function RouteComponent() {
-  const { data: session, isPending } = authClient.useSession();
-  const { messages, error, sendMessage, regenerate, status, stop } = useChat({
+  const { data: session } = authClient.useSession();
+  const { messages, id, sendMessage, regenerate, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: `${env.PUBLIC_AI_API_URL}/chat`,
     }),
@@ -45,7 +45,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full h-full p-2 mx-auto justify-center @sm:p-4 @sm:gap-9 isolate mt-16 @sm:mt-0 overflow-scroll">
+    <div className="flex flex-col ">
       {messages.length > 0 ? (
         <ChatbotConversation
           messages={messages}
@@ -53,6 +53,7 @@ function RouteComponent() {
           onSubmit={sendMessage}
           stop={stop}
           onRegenerate={regenerate}
+          key={id}
         />
       ) : (
         <UploadForm onSubmit={handleSubmit} />

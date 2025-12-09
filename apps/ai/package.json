@@ -28,13 +28,15 @@
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
     "ai": "^5.0.93",
+    "hono-rate-limiter": "^0.4.2",
+    "valibot": "catalog:",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^24.10.0",
+    "@types/node": "^24.10.1",
     "eslint": "catalog:",
     "mastra": "^0.18.0",
     "prettier": "catalog:",

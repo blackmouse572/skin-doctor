@@ -32,6 +32,7 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from '@repo/ui/components/ai-elements/reasoning';
+import { Shimmer } from '@repo/ui/components/ai-elements/shimmer';
 import {
   Source,
   Sources,
@@ -42,7 +43,6 @@ import { ChatStatus } from 'ai';
 import { useState } from 'react';
 import type { UIMessage } from '@ai-sdk/react';
 import type { PromptInputMessage } from '@repo/ui/components/ai-elements/prompt-input';
-import Spinner from '@/routes/-components/common/spinner';
 
 export type ChatbotConversationProps = {
   messages: UIMessage[];
@@ -50,9 +50,10 @@ export type ChatbotConversationProps = {
   onRegenerate?: () => void;
   status?: ChatStatus;
   stop?: () => void;
+  id?: string;
 };
 export function ChatbotConversation(props: ChatbotConversationProps) {
-  const { messages, onSubmit, onRegenerate, status, stop } = props;
+  const { messages, onSubmit, id, onRegenerate, status, stop } = props;
   const [input, setInput] = useState('');
   const handleSubmit = (value: PromptInputMessage) => {
     if (status !== 'streaming' && onSubmit) {
@@ -60,6 +61,54 @@ export function ChatbotConversation(props: ChatbotConversationProps) {
       setInput('');
     } else if (status === 'streaming' && stop) {
       stop();
+    }
+  };
+
+  const renderLatestMessageStreaming = () => {
+    const latestMessage = messages[messages.length - 1];
+    if (status !== 'streaming' || !latestMessage) return null;
+
+    const latestPart = latestMessage.parts[latestMessage.parts.length - 1];
+    if (!latestPart || latestPart.type === 'text') return null;
+
+    const type = latestPart.type;
+    let messageContent;
+    if (type === 'tool-agent-skinAnalysisAgent') {
+      messageContent = (
+        <ReasoningContent>Analyzing your skin condition</ReasoningContent>
+      );
+    } else if (type === 'data-tool-workflow') {
+      const data = latestPart.data as {
+        name: string;
+        status: 'running' | 'success' | 'failed';
+        steps: {
+          'analyze-skin': {
+            name: string;
+            status: 'running' | 'success' | 'failed';
+            output?: Record<string, any> | null;
+          };
+          'analyze-ingredients': {
+            name: string;
+            status: 'running' | 'success' | 'failed';
+            output?: Record<string, any> | null;
+          };
+        };
+        output: Record<string, any> | null;
+      };
+
+      if (data.steps['analyze-skin'].status === 'running') {
+        messageContent = (
+          <ReasoningContent>Analyzing skin condition...</ReasoningContent>
+        );
+      } else if (data.steps['analyze-ingredients'].status === 'running') {
+        messageContent = (
+          <ReasoningContent>Analyzing product ingredients...</ReasoningContent>
+        );
+      } else {
+        messageContent = (
+          <ReasoningContent>Finalizing analysis...</ReasoningContent>
+        );
+      }
     }
   };
   return (
@@ -142,7 +191,11 @@ export function ChatbotConversation(props: ChatbotConversationProps) {
               })}
             </div>
           ))}
-          {status === 'submitted' && <Spinner />}
+          {status === 'submitted' ||
+            (status === 'streaming' && (
+              <Shimmer as="p">Waiting for response...</Shimmer>
+            ))}
+          {renderLatestMessageStreaming()}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
@@ -168,6 +221,7 @@ export function ChatbotConversation(props: ChatbotConversationProps) {
                 <PromptInputActionAddAttachments />
               </PromptInputActionMenuContent>
             </PromptInputActionMenu>
+            <p className="text-xs text-muted-foreground">C/{id}</p>
           </PromptInputTools>
           <PromptInputSubmit disabled={!input && !status} status={status} />
         </PromptInputFooter>

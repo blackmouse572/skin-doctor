@@ -9,6 +9,11 @@ export const NavItems = {
       icon: ChatTeardropTextIcon,
     },
     {
+      title: 'Analyze skin',
+      url: '/analyze-skin',
+      icon: BasketIcon,
+    },
+    {
       title: 'Profile',
       url: '/profile',
       icon: BasketIcon,

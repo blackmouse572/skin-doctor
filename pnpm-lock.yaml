@@ -193,7 +193,7 @@ catalogs:
       specifier: ^5.0.0
       version: 5.0.0
     valibot:
-      specifier: ^1.1.0
+      specifier: 1.1.0
       version: 1.1.0
     vite:
       specifier: ^7.1.12
@@ -246,6 +246,12 @@ importers:
       ai:
         specifier: ^5.0.93
         version: 5.0.93(zod@4.1.12)
+      hono-rate-limiter:
+        specifier: ^0.4.2
+        version: 0.4.2(hono@4.10.3)
+      valibot:
+        specifier: 'catalog:'
+        version: 1.1.0(typescript@5.9.3)
       zod:
         specifier: ^4.1.12
         version: 4.1.12
@@ -260,7 +266,7 @@ importers:
         specifier: workspace:*
         version: link:../../tools/typescript
       '@types/node':
-        specifier: ^24.10.0
+        specifier: ^24.10.1
         version: 24.10.1
       eslint:
         specifier: 'catalog:'
@@ -5750,6 +5756,11 @@ packages:
         optional: true
       zod-openapi:
         optional: true
+
+  hono-rate-limiter@0.4.2:
+    resolution: {integrity: sha512-AAtFqgADyrmbDijcRTT/HJfwqfvhalya2Zo+MgfdrMPas3zSMD8SU03cv+ZsYwRU1swv7zgVt0shwN059yzhjw==}
+    peerDependencies:
+      hono: ^4.1.1
 
   hono@4.10.3:
     resolution: {integrity: sha512-2LOYWUbnhdxdL8MNbNg9XZig6k+cZXm5IjHn2Aviv7honhBMOHb+jxrKIeJRZJRmn+htUCKhaicxwXuUDlchRA==}
@@ -13654,6 +13665,10 @@ snapshots:
       hono: 4.10.3
       valibot: 1.1.0(typescript@5.9.3)
       zod: 4.1.12
+
+  hono-rate-limiter@0.4.2(hono@4.10.3):
+    dependencies:
+      hono: 4.10.3
 
   hono@4.10.3: {}
 

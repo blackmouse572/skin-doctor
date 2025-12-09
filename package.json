@@ -10,6 +10,7 @@
     "db:push": "turbo -F @repo/db push",
     "db:studio": "turbo -F @repo/db studio",
     "dev": "turbo watch dev --continue",
+    "dev:app": "turbo watch dev --continue --filter server --filter ai --filter web",
     "env:copy-example": "turbo run env:copy-example",
     "env:remove": "turbo run env:remove",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",

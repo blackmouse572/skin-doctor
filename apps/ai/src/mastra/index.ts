@@ -2,6 +2,7 @@ import { chatRoute } from '@mastra/ai-sdk';
 import { Mastra } from '@mastra/core/mastra';
 import { LibSQLStore } from '@mastra/libsql';
 import { PinoLogger } from '@mastra/loggers';
+import { env } from '../env';
 import { ingredientAnalysisAgent } from './agents/ingredient-analysis-agent';
 import { routinePlanningAgent } from './agents/routine-planning-agent';
 import { skinAnalysisAgent } from './agents/skin-analysis-agent';
@@ -48,10 +49,23 @@ export const mastra = new Mastra({
   },
   // Server configuration
   server: {
+    middleware: [],
+    cors: {
+      origin: env.CORS_ORIGINS
+        ? env.CORS_ORIGINS.split(',')
+        : ['http://localhost:8085', 'http://localhost:3035'],
+      credentials: true,
+      allowMethods: ['GET', 'POST', 'OPTIONS'],
+      allowHeaders: ['Content-Type', 'Authorization'],
+    },
     apiRoutes: [
       chatRoute({
         path: '/chat',
         agent: 'supervisorAgent',
+      }),
+      chatRoute({
+        path: '/skin-analysis',
+        agent: 'skinAnalysisAgent',
       }),
     ],
   },
