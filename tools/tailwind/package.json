@@ -12,6 +12,7 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
+    "@fontsource-variable/figtree": "^5.2.10",
     "eslint": "catalog:",
     "tailwindcss": "catalog:",
     "tailwindcss-animate": "catalog:"

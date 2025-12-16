@@ -1,6 +1,6 @@
 'use client';
 
-import { Autocomplete as AutocompletePrimitive } from '@base-ui-components/react/autocomplete';
+import { Autocomplete as AutocompletePrimitive } from '@base-ui/react/autocomplete';
 import { CaretUpDown as ChevronsUpDownIcon } from '@phosphor-icons/react/dist/csr/CaretUpDown';
 import { X as XIcon } from '@phosphor-icons/react/dist/csr/X';
 

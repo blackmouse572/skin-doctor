@@ -1,15 +1,48 @@
 import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '#/lib/utils';
 
-function Card({ className, ...props }: React.ComponentProps<'div'>) {
+const cardVariants = cva(
+  'gap-6 overflow-hidden rounded-2xl text-sm has-[>img:first-child]:pt-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl group/card flex flex-col relative',
+  {
+    variants: {
+      variant: {
+        outline: 'ring-foreground/10 bg-card text-card-foreground ring-1 py-6',
+        flat: 'bg-card text-card-foreground py-6',
+      },
+      intent: {
+        primary: '',
+        secondary: 'bg-secondary text-secondary-foreground',
+        success: 'bg-success text-success-foreground',
+        destructive: 'bg-destructive text-destructive-foreground',
+        accent: 'bg-accent text-accent-foreground',
+        muted: 'bg-muted text-muted-foreground',
+      },
+      size: {
+        default: '',
+        sm: 'gap-4 py-4',
+      },
+    },
+    defaultVariants: {
+      variant: 'outline',
+      size: 'default',
+    },
+  },
+);
+
+function Card({
+  className,
+  variant,
+  intent,
+  size,
+  ...props
+}: React.ComponentProps<'div'> & VariantProps<typeof cardVariants>) {
   return (
     <div
       data-slot="card"
-      className={cn(
-        'relative flex flex-col gap-6 rounded-2xl border bg-card bg-clip-padding py-6 text-card-foreground shadow-xs before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:bg-clip-border dark:before:shadow-[0_-1px_--theme(--color-white/8%)]',
-        className,
-      )}
+      data-size={size}
+      className={cn(cardVariants({ variant, intent, size }), className)}
       {...props}
     />
   );
@@ -20,7 +53,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card-header"
       className={cn(
-        '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
+        'gap-2 rounded-t-xl px-6 group-data-[size=sm]/card:px-4 [.border-b]:pb-6 group-data-[size=sm]/card:[.border-b]:pb-4 group/card-header @container/card-header grid auto-rows-min items-start has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]',
         className,
       )}
       {...props}
@@ -32,7 +65,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-title"
-      className={cn('text-lg leading-none font-semibold', className)}
+      className={cn('text-base font-medium', className)}
       {...props}
     />
   );
@@ -42,7 +75,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-description"
-      className={cn('text-sm text-muted-foreground', className)}
+      className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />
   );
@@ -61,11 +94,11 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CardPanel({ className, ...props }: React.ComponentProps<'div'>) {
+function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-content"
-      className={cn('px-6', className)}
+      className={cn('px-6 group-data-[size=sm]/card:px-4', className)}
       {...props}
     />
   );
@@ -75,7 +108,10 @@ function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-footer"
-      className={cn('flex items-center px-6 [.border-t]:pt-6', className)}
+      className={cn(
+        'rounded-b-xl px-6 group-data-[size=sm]/card:px-4 [.border-t]:pt-6 group-data-[size=sm]/card:[.border-t]:pt-4 flex items-center',
+        className,
+      )}
       {...props}
     />
   );
@@ -88,6 +124,5 @@ export {
   CardTitle,
   CardAction,
   CardDescription,
-  CardPanel,
-  CardPanel as CardContent,
+  CardContent,
 };

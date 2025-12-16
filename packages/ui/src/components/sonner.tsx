@@ -1,25 +1,42 @@
-import { useTheme } from 'next-themes';
-import { Toaster as Sonner } from 'sonner';
+'use client';
 
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+import { useTheme } from 'next-themes';
+import { Toaster as Sonner, type ToasterProps } from 'sonner';
+import {
+  CheckCircle,
+  Info,
+  Warning,
+  XCircle,
+  CircleNotch,
+} from '@phosphor-icons/react';
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'light' } = useTheme();
+  const { theme = 'system' } = useTheme();
 
   return (
     <Sonner
       theme={theme as ToasterProps['theme']}
+      className="toaster group"
+      icons={{
+        success: <CheckCircle weight="regular" className="size-4" />,
+        info: <Info weight="regular" className="size-4" />,
+        warning: <Warning weight="regular" className="size-4" />,
+        error: <XCircle weight="regular" className="size-4" />,
+        loading: (
+          <CircleNotch weight="regular" className="size-4 animate-spin" />
+        ),
+      }}
+      style={
+        {
+          '--normal-bg': 'var(--popover)',
+          '--normal-text': 'var(--popover-foreground)',
+          '--normal-border': 'var(--border)',
+          '--border-radius': 'var(--radius)',
+        } as React.CSSProperties
+      }
       toastOptions={{
         classNames: {
-          /**
-           * !important necessary to override sonner styles in Tailwind V4
-           * https://github.com/emilkowalski/sonner/issues/591#issue-2876586315
-           */
-          error: '!border-none !bg-toast-error !text-foreground',
-          info: '!border-none !bg-toast-info !text-foreground',
-          loading: '!border-none !bg-toast-loading !text-foreground',
-          success: '!border-none !bg-toast-success !text-foreground',
-          warning: '!border-none !bg-toast-warning !text-foreground',
+          toast: 'cn-toast',
         },
       }}
       {...props}

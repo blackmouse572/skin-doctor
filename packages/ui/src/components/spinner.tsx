@@ -1,9 +1,9 @@
-import { SpinnerGapIcon as Loader2Icon } from '@phosphor-icons/react/dist/csr/SpinnerGap';
 import { cn } from '#/lib/utils';
-
+import { SpinnerIcon } from '@phosphor-icons/react';
 function Spinner({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
-    <Loader2Icon
+    <SpinnerIcon
+      strokeWidth={2}
       role="status"
       aria-label="Loading"
       className={cn('size-4 animate-spin', className)}

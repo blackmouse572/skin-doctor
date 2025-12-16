@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { Menu as MenuPrimitive } from '@base-ui-components/react/menu';
-import { Check as CheckIcon } from '@phosphor-icons/react/dist/csr/Check';
-import { CaretRight as ChevronRightIcon } from '@phosphor-icons/react/dist/csr/CaretRight';
+import { Menu as MenuPrimitive } from '@base-ui/react/menu';
+import { CheckIcon } from '@phosphor-icons/react/dist/csr/Check';
+import { CaretRightIcon as ChevronRightIcon } from '@phosphor-icons/react/dist/csr/CaretRight';
 
 import { cn } from '#/lib/utils';
 

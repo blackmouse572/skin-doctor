@@ -8,6 +8,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@repo/ui/components/card';
+import { FocusCard, FocusCardContent } from '@repo/ui/components/focus-card';
 import {
   Field,
   FieldDescription,
@@ -174,15 +175,17 @@ export function UploadForm(props: UploadFormProps) {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle>Upload Skin Condition Images</CardTitle>
-                  <CardDescription>
-                    Upload clear photos of your skin condition from different
-                    angles
-                  </CardDescription>
-                </CardHeader>
-                <div className="px-6 pb-6">
+              <FocusCard>
+                <FocusCardContent>
+                  <div className="flex flex-col gap-1.5 mb-6">
+                    <h3 className="font-semibold leading-none tracking-tight">
+                      Upload Skin Condition Images
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Upload clear photos of your skin condition from different
+                      angles
+                    </p>
+                  </div>
                   <form.Field name="images">
                     {(field) => (
                       <SingleUploader
@@ -194,8 +197,8 @@ export function UploadForm(props: UploadFormProps) {
                       />
                     )}
                   </form.Field>
-                </div>
-              </Card>
+                </FocusCardContent>
+              </FocusCard>
             </motion.div>
           )}
 

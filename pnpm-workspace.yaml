@@ -57,7 +57,7 @@ catalog:
   react-dom: ^19.2.0
   shx: ^0.4.0
   sonner: ^2.0.7
-  tailwind-merge: ^3.3.1
+  tailwind-merge: 3.3.1
   tailwindcss: ^4.1.16
   tailwindcss-animate: ^1.0.7
   tsdown: ^0.15.9
