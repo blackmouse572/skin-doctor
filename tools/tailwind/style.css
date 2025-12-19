@@ -322,7 +322,20 @@
   html {
     @apply font-sans;
   }
-  .border-squircle {
-    corner-shape: squircle;
-  }
+}
+
+@utility border-squircle {
+  corner-shape: squircle;
+}
+@utility border-squircle-sm {
+  corner-shape: squircle(0.75);
+}
+@utility border-squircle-lg {
+  corner-shape: squircle(1.25);
+}
+@utility border-squircle-xl {
+  corner-shape: squircle(1.5);
+}
+@utility border-round {
+  corner-shape: round;
 }

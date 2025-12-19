@@ -54,11 +54,11 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
           <FocusCardFooter>
             <div className="flex justify-center">
               <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]) => (
+                selector={(state) => state.isValid && !state.isPristine}
+                children={(canSubmit) => (
                   <Button
                     type="submit"
-                    disabled={(!canSubmit as boolean) || isSubmitting}
+                    disabled={!canSubmit}
                     className="w-full sm:w-auto min-w-[200px]"
                   >
                     Next Step

@@ -66,10 +66,7 @@ export default function Component(props: SingleUploaderProps) {
                 className="mt-4"
                 onClick={openFileDialog}
               >
-                <UploadIcon
-                  className="-ms-1 size-4 opacity-60"
-                  aria-hidden="true"
-                />
+                <UploadIcon className="opacity-60" aria-hidden="true" />
                 Select image
               </Button>
             </div>

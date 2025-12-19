@@ -34,6 +34,7 @@
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "recharts": "^3.6.0",
     "sonner": "catalog:",
     "tailwindcss": "catalog:",
     "url-join": "catalog:",
