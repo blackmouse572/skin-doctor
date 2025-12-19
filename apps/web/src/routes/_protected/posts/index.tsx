@@ -23,7 +23,6 @@ import * as v from 'valibot';
 import type { RouterOutput } from '@repo/api/client';
 import { apiClient } from '@/clients/apiClient';
 import { queryClient } from '@/clients/queryClient';
-import CreatePostButton from '@/routes/_protected/posts/-components/create-post';
 import DeletePostButton from '@/routes/_protected/posts/-components/delete-post';
 import {
   postsSearchDefaults,
@@ -105,13 +104,12 @@ function RouteComponent() {
     <div className="flex flex-col p-1.5 md:p-4 w-full max-w-6xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl">Posts</h1>
-        <CreatePostButton />
       </div>
       <hr className="mt-4 border-b-2 border-gray-400" />
 
       <div className="mt-4 flex justify-end items-center relative gap-x-2">
         <TooltipProvider>
-          <Tooltip delay={0}>
+          <Tooltip>
             <TooltipTrigger
               onClick={(e) => e.preventDefault()}
               render={

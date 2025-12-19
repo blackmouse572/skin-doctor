@@ -1,4 +1,5 @@
 import { Toaster } from '@repo/ui/components/sonner';
+import { TanStackDevtools } from '@tanstack/react-devtools';
 import { Outlet, createRootRoute } from '@tanstack/react-router';
 import React from 'react';
 import { authClient } from '@/clients/authClient';

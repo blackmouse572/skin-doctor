@@ -7,6 +7,7 @@ import { ChatbotConversation } from './-components/chatbot-conversation';
 import { UploadForm } from './-components/upload-form';
 import { authClient } from '@/clients/authClient';
 import { env } from '@/env';
+import { FillInfoStep } from '../../-components/skin-analysis/steps/fill-info-step';
 
 export const Route = createFileRoute('/_protected/chat/')({
   component: RouteComponent,
@@ -46,18 +47,7 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col ">
-      {messages.length > 0 ? (
-        <ChatbotConversation
-          messages={messages}
-          status={status}
-          onSubmit={sendMessage}
-          stop={stop}
-          onRegenerate={regenerate}
-          key={id}
-        />
-      ) : (
-        <UploadForm onSubmit={handleSubmit} />
-      )}
+      <FillInfoStep onNext={() => {}} />
     </div>
   );
 }
