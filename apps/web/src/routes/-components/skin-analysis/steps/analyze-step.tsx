@@ -1,3 +1,4 @@
+import { CaretLeft, MagicWand } from '@phosphor-icons/react';
 import { Button } from '@repo/ui/components/button';
 import {
   Card,
@@ -6,7 +7,6 @@ import {
   CardTitle,
   CardDescription,
 } from '@repo/ui/components/card';
-import { CaretLeft, MagicWand } from '@phosphor-icons/react';
 import type { SkinAnalysisData } from '../schemas';
 
 interface AnalyzeStepProps {

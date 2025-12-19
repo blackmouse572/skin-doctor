@@ -8,7 +8,7 @@ export const uploadStepSchema = v.object({
 });
 
 export const fillInfoStepSchema = v.object({
-  symptoms: v.pipe(v.string(), v.minLength(1, 'Please describe your symptoms')),
+  symptoms: v.optional(v.string()),
   description: v.pipe(
     v.string(),
     v.minLength(

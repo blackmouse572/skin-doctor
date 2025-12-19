@@ -1,12 +1,12 @@
-import { Agent } from "@mastra/core/agent";
-import { Memory } from "@mastra/memory";
-import { LibSQLStore } from "@mastra/libsql";
-import { ingredientAnalysisTool } from "../tools/ingredient-analysis-tool";
-import { scorers } from "../scorers/skincare-scorers";
-import { google } from "@ai-sdk/google";
+import { Agent } from '@mastra/core/agent';
+import { Memory } from '@mastra/memory';
+import { LibSQLStore } from '@mastra/libsql';
+import { ingredientAnalysisTool } from '../tools/ingredient-analysis-tool';
+import { scorers } from '../scorers/skincare-scorers';
+import { google } from '@ai-sdk/google';
 
 export const ingredientAnalysisAgent = new Agent({
-  name: "Ingredient Analysis Agent",
+  name: 'Ingredient Analysis Agent',
   instructions: `
     **Persona: You are an AI Cosmetic Chemist.**
 
@@ -21,7 +21,7 @@ export const ingredientAnalysisAgent = new Agent({
     5.  **Invoke Tool:** Use the 'ingredientAnalysisTool' to structure and return your findings.
 
     **Handling Unknown Ingredients:**
-    *   If you encounter an ingredient that is not in your internal database, you MUST use the 'webSearch' tool to find information about it.
+    *   If you encounter an ingredient that is not in your internal database, you MUST use the 'google.goole_search' tool to find information about it.
     *   Formulate your search query to be specific, e.g., "skincare ingredient [ingredient name]", "[ingredient name] function in cosmetics", or "[ingredient name] safety".
     *   Synthesize the information from the search results to complete the analysis.
     *   If you cannot find reliable information, clearly state that the ingredient is unknown and data is unavailable.
@@ -42,11 +42,11 @@ export const ingredientAnalysisAgent = new Agent({
 
     Your final output must be a call to the 'ingredientAnalysisTool' with a JSON object that strictly follows the specified structure.
   `,
-  model: "google/gemini-2.5-flash",
+  model: 'google/gemini-2.5-flash',
   tools: {
     ingredientAnalysisTool,
     webSearch: google.tools.googleSearch({
-      mode: "MODE_DYNAMIC",
+      mode: 'MODE_DYNAMIC',
       dynamicThreshold: 0.7,
     }),
   },
@@ -54,14 +54,14 @@ export const ingredientAnalysisAgent = new Agent({
     ingredientAnalysisConfidence: {
       scorer: scorers.ingredientAnalysisConfidenceScorer,
       sampling: {
-        type: "ratio",
+        type: 'ratio',
         rate: 1,
       },
     },
   },
   memory: new Memory({
     storage: new LibSQLStore({
-      url: "file:../mastra.db",
+      url: 'file:../mastra.db',
     }),
   }),
 });

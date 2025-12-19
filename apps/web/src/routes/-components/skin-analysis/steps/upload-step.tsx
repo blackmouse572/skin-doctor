@@ -1,6 +1,10 @@
 import { LockIcon, Sun, Smiley, Scan } from '@phosphor-icons/react';
 import { Button } from '@repo/ui/components/button';
-import { FocusCard, FocusCardContent } from '@repo/ui/components/focus-card';
+import {
+  FocusCard,
+  FocusCardContent,
+  FocusCardFooter,
+} from '@repo/ui/components/focus-card';
 import { Form } from '@repo/ui/components/form';
 import SingleUploader from '@repo/ui/components/single-uploader';
 import { useForm } from '@tanstack/react-form';
@@ -45,23 +49,24 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
                   />
                 )}
               </form.Field>
-
-              <div className="mt-6 flex justify-center">
-                <form.Subscribe
-                  selector={(state) => [state.canSubmit, state.isSubmitting]}
-                  children={([canSubmit, isSubmitting]) => (
-                    <Button
-                      type="submit"
-                      disabled={(!canSubmit as boolean) || isSubmitting}
-                      className="w-full sm:w-auto min-w-[200px]"
-                    >
-                      Next Step
-                    </Button>
-                  )}
-                />
-              </div>
             </div>
           </FocusCardContent>
+          <FocusCardFooter>
+            <div className="flex justify-center">
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    disabled={(!canSubmit as boolean) || isSubmitting}
+                    className="w-full sm:w-auto min-w-[200px]"
+                  >
+                    Next Step
+                  </Button>
+                )}
+              />
+            </div>
+          </FocusCardFooter>
         </FocusCard>
       </Form>
       <div className="flex items-center justify-center gap-2 mt-4 text-sm text-muted-foreground">

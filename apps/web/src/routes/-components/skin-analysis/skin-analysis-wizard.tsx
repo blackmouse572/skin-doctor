@@ -118,6 +118,7 @@ export function SkinAnalysisWizard() {
         {currentStep === 2 && (
           <FillInfoStep
             initialData={fillInfoData || undefined}
+            uploadedImage={uploadData?.images?.[0]}
             onNext={handleFillInfoNext}
             onPrev={prevStep}
           />

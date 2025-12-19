@@ -46,6 +46,42 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-ui-tag-blue-bg: var(--bg-ui-tag-blue-bg);
+  --color-ui-tag-blue-bg-hover: var(--bg-ui-tag-blue-bg-hover);
+  --color-ui-tag-blue-border: var(--border-ui-tag-blue-border);
+  --color-ui-tag-blue-icon: var(--text-ui-tag-blue-icon);
+  --color-ui-tag-blue-text: var(--text-ui-tag-blue-text);
+
+  --color-ui-tag-green-bg: var(--bg-ui-tag-green-bg);
+  --color-ui-tag-green-bg-hover: var(--bg-ui-tag-green-bg-hover);
+  --color-ui-tag-green-border: var(--border-ui-tag-green-border);
+  --color-ui-tag-green-icon: var(--text-ui-tag-green-icon);
+  --color-ui-tag-green-text: var(--text-ui-tag-green-text);
+
+  --color-ui-tag-neutral-bg: var(--bg-ui-tag-neutral-bg);
+  --color-ui-tag-neutral-bg-hover: var(--bg-ui-tag-neutral-bg-hover);
+  --color-ui-tag-neutral-border: var(--border-ui-tag-neutral-border);
+  --color-ui-tag-neutral-icon: var(--text-ui-tag-neutral-icon);
+  --color-ui-tag-neutral-text: var(--text-ui-tag-neutral-text);
+
+  --color-ui-tag-orange-bg: var(--bg-ui-tag-orange-bg);
+  --color-ui-tag-orange-bg-hover: var(--bg-ui-tag-orange-bg-hover);
+  --color-ui-tag-orange-border: var(--border-ui-tag-orange-border);
+  --color-ui-tag-orange-icon: var(--text-ui-tag-orange-icon);
+  --color-ui-tag-orange-text: var(--text-ui-tag-orange-text);
+
+  --color-ui-tag-purple-bg: var(--bg-ui-tag-purple-bg);
+  --color-ui-tag-purple-bg-hover: var(--bg-ui-tag-purple-bg-hover);
+  --color-ui-tag-purple-border: var(--border-ui-tag-purple-border);
+  --color-ui-tag-purple-icon: var(--text-ui-tag-purple-icon);
+  --color-ui-tag-purple-text: var(--text-ui-tag-purple-text);
+
+  --color-ui-tag-red-bg: var(--bg-ui-tag-red-bg);
+  --color-ui-tag-red-bg-hover: var(--bg-ui-tag-red-bg-hover);
+  --color-ui-tag-red-border: var(--border-ui-tag-red-border);
+  --color-ui-tag-red-icon: var(--text-ui-tag-red-icon);
+  --color-ui-tag-red-text: var(--text-ui-tag-red-text);
 }
 
 /*
@@ -209,6 +245,37 @@
   --sidebar-accent-foreground: oklch(0.98 0.02 201);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  --bg-ui-tag-blue-bg: oklch(0.932 0.032 255.609);
+  --bg-ui-tag-blue-bg-hover: oklch(0.882 0.057 254.145);
+  --border-ui-tag-blue-border: oklch(0.882 0.057 254.145);
+  --text-ui-tag-blue-icon: oklch(0.714 0.143 254.632);
+  --text-ui-tag-blue-text: oklch(0.424 0.181 265.643);
+  --bg-ui-tag-green-bg: oklch(0.95 0.051 163.145);
+  --bg-ui-tag-green-bg-hover: oklch(0.905 0.089 164.202);
+  --border-ui-tag-green-border: oklch(0.905 0.089 164.202);
+  --text-ui-tag-green-icon: oklch(0.696 0.149 162.505);
+  --text-ui-tag-green-text: oklch(0.432 0.086 166.94);
+  --bg-ui-tag-neutral-bg: oklch(0.967 0.001 285.035);
+  --bg-ui-tag-neutral-bg-hover: oklch(0.92 0.004 285.888);
+  --border-ui-tag-neutral-border: oklch(0.92 0.004 285.888);
+  --text-ui-tag-neutral-icon: oklch(0.712 0.013 285.965);
+  --text-ui-tag-neutral-text: oklch(0.442 0.015 285.733);
+  --bg-ui-tag-orange-bg: oklch(0.954 0.037 75.15);
+  --bg-ui-tag-orange-bg-hover: oklch(0.901 0.073 70.687);
+  --border-ui-tag-orange-border: oklch(0.901 0.073 70.687);
+  --text-ui-tag-orange-icon: oklch(0.705 0.187 47.596);
+  --text-ui-tag-orange-text: oklch(0.47 0.143 37.295);
+  --bg-ui-tag-purple-bg: oklch(0.943 0.028 294.506);
+  --bg-ui-tag-purple-bg-hover: oklch(0.894 0.055 293.246);
+  --border-ui-tag-purple-border: oklch(0.894 0.055 293.246);
+  --text-ui-tag-purple-icon: oklch(0.709 0.159 293.534);
+  --text-ui-tag-purple-text: oklch(0.432 0.211 292.76);
+  --bg-ui-tag-red-bg: oklch(0.941 0.03 12.435);
+  --bg-ui-tag-red-bg-hover: oklch(0.892 0.056 9.928);
+  --border-ui-tag-red-border: oklch(0.892 0.056 9.928);
+  --text-ui-tag-red-icon: oklch(0.645 0.215 16.429);
+  --text-ui-tag-red-text: oklch(0.455 0.171 13.688);
 }
 
 .dark {
@@ -250,9 +317,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply font-sans bg-background text-foreground;
+    @apply font-sans bg-sidebar text-foreground;
   }
   html {
     @apply font-sans;
+  }
+  .border-squircle {
+    corner-shape: squircle;
   }
 }
