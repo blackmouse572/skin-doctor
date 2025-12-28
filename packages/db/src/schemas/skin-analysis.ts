@@ -4,7 +4,10 @@ import * as v from 'valibot';
 import { user } from './auth';
 
 export const skinAnalysis = pgTable('skin_analysis', (t) => ({
-  id: t.uuid().primaryKey().defaultRandom(),
+  id: t
+    .bigint('id', { mode: 'number' })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
   userId: t
     .text('user_id')
     .notNull()
@@ -90,7 +93,7 @@ export const CreateSkinAnalysisSchema = v.object({
 export const SkinAnalysisResponseSchema = v.object({
   message: v.string(),
   data: v.object({
-    analysisId: v.string(),
+    analysisId: v.number(),
     summary: v.object({
       images: v.array(v.string()),
       skin: v.object({

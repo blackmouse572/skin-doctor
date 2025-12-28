@@ -1,5 +1,5 @@
 {
-  "id": "9ad8b1b5-1264-4094-8061-80b5e2571ffe",
+  "id": "0d8b7e38-c6fb-47a9-9db6-0f3e818235d8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -369,10 +369,20 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": true,
           "notNull": true,
-          "default": "gen_random_uuid()"
+          "identity": {
+            "type": "always",
+            "name": "skin_analysis_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "user_id": {
           "name": "user_id",

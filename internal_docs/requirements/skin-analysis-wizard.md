@@ -93,3 +93,10 @@ Skin analysis wizards is a step-by-step guide for user to enter their skin infor
   }
 }
 ```
+
+## TODO
+[ ] Implement Image Upload Module using Cloudinary SDK
+[ ] Design Chat UI for A.I Recommendations
+[ ] Integrate A.I Analysis Service with Server
+[ ] Test End-to-End Flow from Client to A.I Analysis
+[ ] Improve Chat Experience with UI Components

@@ -1,15 +1,7 @@
-import { ArrowLeft, ChatCircle, Sparkle } from '@phosphor-icons/react';
-import { Button } from '@repo/ui/components/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@repo/ui/components/card';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Link, createFileRoute } from '@tanstack/react-router';
 import { apiClient } from '@/clients/apiClient';
+import { useFormatDateString } from '@repo/ui/hooks/use-date';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
 import { ResultStep } from '../../-components/skin-analysis/steps/result-step';
 
 export const Route = createFileRoute('/_protected/chat/$chatid')({
@@ -18,7 +10,7 @@ export const Route = createFileRoute('/_protected/chat/$chatid')({
     if (queryClient) {
       await queryClient.ensureQueryData(
         apiClient.skinAnalysis.get.queryOptions({
-          input: { id: params.chatid },
+          input: { id: Number(params.chatid) },
         }),
       );
     }
@@ -29,32 +21,33 @@ export const Route = createFileRoute('/_protected/chat/$chatid')({
 function RouteComponent() {
   const { chatid } = Route.useParams();
   const { data: analysis } = useSuspenseQuery(
-    apiClient.skinAnalysis.get.queryOptions({ input: { id: chatid } }),
+    apiClient.skinAnalysis.get.queryOptions({ input: { id: Number(chatid) } }),
   );
+  const createdAt = useFormatDateString(analysis.createdAt);
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       {/* Header */}
-      <div className="mb-6">
-        <Link to="/" className="mb-4 inline-block">
-          <Button variant="ghost">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Button>
-        </Link>
-        <h1 className="text-3xl font-bold mb-2">Skin Analysis Chat</h1>
-        <p className="text-muted-foreground">
-          Discuss your skin analysis results with AI
+      <div className="flex justify-between items-center text-sm mb-6 text-muted-foreground">
+        <p>
+          <span>#</span>
+          <span>{analysis.id}</span>
         </p>
+        <p>{createdAt}</p>
       </div>
       <ResultStep
         data={{
           data: {
             analysisId: analysis.id,
             summary: {
-              concerns: analysis.analysisResult?.concerns,
+              concerns: analysis.analysisResult?.concerns || [],
               images: analysis.imageUrls,
-              skin: analysis.analysisResult?.skin,
+              skin: analysis.analysisResult?.skin || {
+                healthPoint: 0,
+                moistureLevel: 0,
+                skinAge: 0,
+                skinType: 'Unknown',
+              },
             },
           },
           message: '',

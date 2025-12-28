@@ -216,7 +216,7 @@ export function ResultStep({ data }: ResultStepProps) {
           <div className="flex justify-end">
             <Link
               to="/chat/$chatid"
-              params={{ chatid: analysisId }}
+              params={{ chatid: String(analysisId) }}
               className="w-full sm:w-auto"
             >
               <Button size="lg" className="w-full">

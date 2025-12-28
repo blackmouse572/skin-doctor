@@ -31,14 +31,14 @@ const skinAnalysisContract = oc
           status: 404,
           message: 'Skin analysis not found',
           data: v.object({
-            analysisId: v.string(),
+            analysisId: v.number(),
           }),
         },
       })
-      .input(v.object({ id: v.pipe(v.string(), v.uuid()) }))
+      .input(v.object({ id: v.number() }))
       .output(
         v.object({
-          id: v.string(),
+          id: v.number(),
           imageUrls: v.array(v.string()),
           description: v.string(),
           symptoms: v.nullable(v.string()),
@@ -79,7 +79,7 @@ const skinAnalysisContract = oc
       .output(
         v.array(
           v.object({
-            id: v.string(),
+            id: v.number(),
             imageUrls: v.array(v.string()),
             description: v.string(),
             status: v.picklist([

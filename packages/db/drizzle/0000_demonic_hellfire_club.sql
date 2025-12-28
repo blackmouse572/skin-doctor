@@ -55,7 +55,7 @@ CREATE TABLE "post" (
 );
 --> statement-breakpoint
 CREATE TABLE "skin_analysis" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "skin_analysis_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
 	"user_id" text NOT NULL,
 	"image_urls" jsonb NOT NULL,
 	"symptoms" text,
