@@ -42,8 +42,6 @@ const skinAnalysisContract = oc
           imageUrls: v.array(v.string()),
           description: v.string(),
           symptoms: v.nullable(v.string()),
-          duration: v.nullable(v.string()),
-          currentRoutine: v.nullable(v.string()),
           morningRoutine: v.nullable(v.string()),
           eveningRoutine: v.nullable(v.string()),
           status: v.picklist(['pending', 'processing', 'completed', 'failed']),
