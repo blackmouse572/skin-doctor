@@ -26,8 +26,6 @@ import {
 } from '@repo/ui/components/input-group';
 import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
-import { toast } from 'sonner';
-import * as v from 'valibot';
 
 import { Badge } from '@repo/ui/components/badge';
 import {
@@ -40,7 +38,6 @@ import { cn } from '@repo/ui/lib/utils';
 import { ActionCard, UploadedImage } from '../components';
 import {
   routineImprovementStepSchema,
-  validateRoutineImprovement,
   type RoutineImprovementStepData,
 } from '../schemas';
 
@@ -82,34 +79,22 @@ export function RoutineImprovementStep({
   );
 
   const form = useForm({
-    defaultValues: initialData || {
-      morningRoutine: '',
-      eveningRoutine: '',
-      routineSkipped: false,
-    },
+    defaultValues: {
+      morningRoutine: initialData?.morningRoutine || '',
+      eveningRoutine: initialData?.eveningRoutine || '',
+    } as RoutineImprovementStepData,
     validators: {
-      onSubmit: ({ value }) => {
-        // First validate with valibot schema
-        const result = v.safeParse(routineImprovementStepSchema, value);
-        if (!result.success) {
-          return result.issues.map((issue) => issue.message).join(', ');
-        }
-
-        // Then apply custom validation
-        if (!validateRoutineImprovement(result.output)) {
-          return 'Please provide at least 30 characters total across morning and evening routines, or skip this step.';
-        }
-
-        return undefined;
-      },
+      onBlur: routineImprovementStepSchema,
     },
     onSubmit: async ({ value }) => {
       onNext(value);
     },
     onSubmitInvalid: async () => {
-      toast.error(
-        'Please provide at least 30 characters total in your routines, or skip this step.',
-      );
+      const InvalidInput = document.querySelector(
+        '[aria-invalid="true"]',
+      ) as HTMLInputElement;
+
+      InvalidInput?.focus();
     },
   });
 
@@ -118,7 +103,7 @@ export function RoutineImprovementStep({
     fieldName: 'morningRoutine' | 'eveningRoutine',
   ) => {
     form.setFieldValue(fieldName, (prev) => {
-      const productText = `${product.emoji} ${product.label}`;
+      const productText = product.label;
       const newRoutine = prev ? `${prev}, ${productText}` : productText;
 
       if (fieldName === 'morningRoutine') {
@@ -129,10 +114,6 @@ export function RoutineImprovementStep({
 
       return newRoutine;
     });
-  };
-
-  const handleSkip = () => {
-    onSkip();
   };
 
   const maxChars = 1000;
@@ -205,9 +186,7 @@ export function RoutineImprovementStep({
                           </InputGroupAddon>
                         </InputGroup>
 
-                        {isInvalid && (
-                          <FieldError errors={field.state.meta.errors} />
-                        )}
+                        <FieldError errors={field.state.meta.errors} />
 
                         <div className="flex flex-wrap gap-2 items-center">
                           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mr-1">
@@ -283,9 +262,7 @@ export function RoutineImprovementStep({
                         </InputGroupAddon>
                       </InputGroup>
 
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
+                      <FieldError errors={field.state.meta.errors} />
 
                       <div className="flex flex-wrap gap-2 items-center">
                         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mr-1">
@@ -345,7 +322,7 @@ export function RoutineImprovementStep({
               description="Skip routine improvement and proceed to analysis."
               icon={<FastForwardIcon className="w-6 h-6" weight="fill" />}
               actionLabel="Skip"
-              onAction={handleSkip}
+              onAction={() => onSkip()}
               iconContainerClassName="bg-purple-100 text-purple-600 group-hover:scale-110"
             />
           </div>
@@ -358,37 +335,7 @@ export function RoutineImprovementStep({
             icon={<ArrowsClockwise className="w-32 h-32" weight="fill" />}
             badge="AI POWERED"
             actionLabel="Continue"
-            onAction={async () => {
-              // Validate before submitting
-              const result = v.safeParse(
-                routineImprovementStepSchema,
-                form.state.values,
-              );
-
-              if (!result.success) {
-                toast.error('Please fill in your routine information.');
-                return;
-              }
-
-              if (!validateRoutineImprovement(result.output)) {
-                // Mark fields as touched to show validation errors
-                form.setFieldMeta('morningRoutine', (prev) => ({
-                  ...prev,
-                  isTouched: true,
-                }));
-                form.setFieldMeta('eveningRoutine', (prev) => ({
-                  ...prev,
-                  isTouched: true,
-                }));
-
-                toast.error(
-                  'Please provide at least 30 characters total across morning and evening routines.',
-                );
-                return;
-              }
-
-              form.handleSubmit();
-            }}
+            onAction={() => form.handleSubmit()}
             buttonClassName="place-item-end"
           />
         </div>

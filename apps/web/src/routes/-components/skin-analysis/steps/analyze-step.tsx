@@ -1,13 +1,26 @@
-import { CaretLeft, MagicWand } from '@phosphor-icons/react';
+import {
+  CaretLeft,
+  MagicWand,
+  Moon,
+  Sparkle,
+  Sun,
+} from '@phosphor-icons/react';
 import { Button } from '@repo/ui/components/button';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@repo/ui/components/card';
+import {
+  FocusCard,
+  FocusCardContent,
+  FocusCardFooter,
+} from '@repo/ui/components/focus-card';
+import { useBlocker } from '@tanstack/react-router';
 import type { SkinAnalysisData } from '../schemas';
+import { ActionCard, UploadedImage } from '../components';
 
 interface AnalyzeStepProps {
   data: SkinAnalysisData;
@@ -16,47 +29,131 @@ interface AnalyzeStepProps {
 }
 
 export function AnalyzeStep({ data, onPrev, onSubmit }: AnalyzeStepProps) {
-  return (
-    <div className="w-full max-w-3xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <Card className="text-center">
-        <CardHeader>
-          <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4 w-fit">
-            <MagicWand className="w-8 h-8 text-primary" weight="duotone" />
-          </div>
-          <CardTitle className="text-2xl">Ready to Analyze?</CardTitle>
-          <CardDescription>
-            We have everything we need to analyze your skin condition.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="bg-muted/50 p-4 rounded-lg text-left text-sm space-y-2">
-            <p>
-              <span className="font-semibold">Images:</span>{' '}
-              {data.upload.images.length} photo(s) uploaded
-            </p>
-            <p>
-              <span className="font-semibold">Symptoms:</span>{' '}
-              {data.fillInfo.symptoms}
-            </p>
-            <p>
-              <span className="font-semibold">Description:</span>{' '}
-              {data.fillInfo.description.substring(0, 100)}
-              {data.fillInfo.description.length > 100 ? '...' : ''}
-            </p>
-          </div>
+  useBlocker({
+    shouldBlockFn: () => true,
+    enableBeforeUnload: true,
+  });
 
-          <div className="flex justify-between pt-4">
-            <Button variant="outline" onClick={onPrev} className="gap-2">
-              <CaretLeft className="w-4 h-4" />
-              Previous
-            </Button>
-            <Button onClick={onSubmit} className="gap-2 min-w-[200px]">
-              <MagicWand className="w-4 h-4" />
-              Start Analysis
-            </Button>
+  return (
+    <FocusCard className="w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <FocusCardContent className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full mx-0 max-w-max">
+        {/* Left Column - Image */}
+        <div className="lg:col-span-5">
+          <div className="sticky top-8 space-y-4">
+            <UploadedImage uploadedImage={data.upload.images[0]} />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+
+        {/* Right Column - Review Data */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          {/* Skin Concern */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkle className="w-5 h-5 text-primary" weight="fill" />
+                Your Skin Concern
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                {data.fillInfo.description || 'No description provided'}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Routine Information (if provided) */}
+          {data.routineImprovement?.eveningRoutine &&
+          data.routineImprovement.morningRoutine ? (
+            <>
+              {/* Morning Routine */}
+              {data.routineImprovement.morningRoutine && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sun className="w-5 h-5 text-amber-500" weight="fill" />
+                      Morning Routine
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {data.routineImprovement.morningRoutine}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Evening Routine */}
+              {data.routineImprovement.eveningRoutine && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Moon className="w-5 h-5 text-indigo-500" weight="fill" />
+                      Evening Routine
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {data.routineImprovement.eveningRoutine}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkle className="w-5 h-5 text-primary" weight="fill" />
+                  Routine Improvement
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm text-muted-foreground">
+                  You chose to skip the routine improvement step. AI will
+                  provide analysis based on your skin concern only.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </FocusCardContent>
+
+      <FocusCardFooter className="space-y-4">
+        <h3 className="text-xl font-bold">Review & Submit</h3>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Secondary Action */}
+          <ActionCard
+            title="Go back"
+            description="Return to previous step to edit your information."
+            icon={<CaretLeft className="w-6 h-6" />}
+            actionLabel="Back"
+            onAction={onPrev}
+            iconContainerClassName="bg-gray-100 text-gray-600 group-hover:scale-110"
+            footerSlot={
+              <Button
+                variant="secondary"
+                onClick={onPrev}
+                className="w-full shadow"
+              >
+                <CaretLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+            }
+          />
+
+          {/* Main Action Card */}
+          <ActionCard
+            variant="primary"
+            title="Start AI Analysis"
+            description="Get personalized skin insights and recommendations powered by AI."
+            icon={<MagicWand className="w-32 h-32" weight="fill" />}
+            badge="AI POWERED"
+            actionLabel="Analyze Now"
+            onAction={onSubmit}
+            buttonClassName="place-item-end"
+          />
+        </div>
+      </FocusCardFooter>
+    </FocusCard>
   );
 }

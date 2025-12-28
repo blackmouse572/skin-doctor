@@ -32,6 +32,14 @@ import { ActionCard, UploadedImage } from '../components';
 import { fillInfoStepSchema, type FillInfoStepData } from '../schemas';
 import { Form } from '@repo/ui/components/form';
 
+type FormMeta = {
+  submitAction: 'improveRoutine' | 'skipToAnalyze' | null;
+};
+
+const defaultMeta: FormMeta = {
+  submitAction: null,
+};
+
 interface FillInfoStepProps {
   initialData?: FillInfoStepData;
   uploadedImage?: File | { preview?: string };
@@ -66,23 +74,30 @@ export function FillInfoStep({
       currentRoutine: initialData?.currentRoutine || '',
     } as FillInfoStepData,
     validators: {
-      onChange: fillInfoStepSchema,
+      onBlur: fillInfoStepSchema,
     },
-    onSubmit: async ({ value }) => {
-      onNext(value);
+    onSubmitMeta: defaultMeta,
+    onSubmit: async ({ value, meta }) => {
+      switch (meta.submitAction) {
+        case 'improveRoutine':
+          onImproveRoutine(value);
+          break;
+        case 'skipToAnalyze':
+          onSkipToAnalyze(value);
+          break;
+        default:
+          onNext(value);
+          break;
+      }
+    },
+    onSubmitInvalid() {
+      const InvalidInput = document.querySelector(
+        '[aria-invalid="true"]',
+      ) as HTMLInputElement;
+
+      InvalidInput?.focus();
     },
   });
-
-  const validateAndExecute = async (
-    callback: (data: FillInfoStepData) => void,
-  ) => {
-    // Validate the form data using valibot
-    const result = v.safeParse(fillInfoStepSchema, form.state.values);
-
-    if (result.success) {
-      callback(result.output);
-    }
-  };
 
   const handleSuggestionClick = (
     suggestion: string,
@@ -222,9 +237,9 @@ export function FillInfoStep({
               description="Get AI skin analysis without routine improvement."
               icon={<FastForwardIcon className="w-6 h-6" weight="fill" />}
               actionLabel="Skip"
-              onAction={async () => {
-                await validateAndExecute(onSkipToAnalyze);
-              }}
+              onAction={() =>
+                form.handleSubmit({ submitAction: 'skipToAnalyze' })
+              }
               iconContainerClassName="bg-purple-100 text-purple-600 group-hover:scale-110"
             />
           </div>
@@ -237,9 +252,9 @@ export function FillInfoStep({
             icon={<FirstAid className="w-32 h-32" weight="fill" />}
             badge="RECOMMENDED"
             actionLabel="Fill my routine"
-            onAction={async () => {
-              await validateAndExecute(onImproveRoutine);
-            }}
+            onAction={() =>
+              form.handleSubmit({ submitAction: 'improveRoutine' })
+            }
             buttonClassName="place-item-end"
           />
         </div>

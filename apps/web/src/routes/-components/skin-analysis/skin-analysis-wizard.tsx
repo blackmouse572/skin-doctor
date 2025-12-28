@@ -8,10 +8,10 @@ import {
   StepperTitle,
   StepperTrigger,
 } from '@repo/ui/components/stepper';
-import { UploadStep } from './steps/upload-step';
-import { FillInfoStep } from './steps/fill-info-step';
 import { AnalyzeStep } from './steps/analyze-step';
+import { FillInfoStep } from './steps/fill-info-step';
 import { RoutineImprovementStep } from './steps/routine-improvement-step';
+import { UploadStep } from './steps/upload-step';
 import {
   SkinAnalysisWizardProvider,
   useSkinAnalysisWizard,

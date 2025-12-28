@@ -21,29 +21,20 @@ export const fillInfoStepSchema = v.object({
   currentRoutine: v.optional(v.string()),
 });
 
-export const routineImprovementStepSchema = v.pipe(
-  v.object({
-    morningRoutine: v.optional(v.string(), ''),
-    eveningRoutine: v.optional(v.string(), ''),
-    routineSkipped: v.optional(v.boolean(), false),
-  }),
-  v.check((data) => {
-    if (data.routineSkipped) return true;
-    const morningLength = data.morningRoutine?.length || 0;
-    const eveningLength = data.eveningRoutine?.length || 0;
-    return morningLength + eveningLength >= 30;
-  }, 'Please provide at least 30 characters total across morning and evening routines, or skip this step.'),
-);
+export const routineImprovementStepSchema = v.object({
+  morningRoutine: v.pipe(
+    v.string(),
+    v.minLength(10, 'Morning routine must be at least 10 characters'),
+    v.maxLength(2000, 'Morning routine must not exceed 2000 characters'),
+  ),
+  eveningRoutine: v.pipe(
+    v.string(),
+    v.minLength(10, 'Evening routine must be at least 10 characters'),
+    v.maxLength(2000, 'Evening routine must not exceed 2000 characters'),
+  ),
+});
 
 // Custom validation: at least one routine must have 30+ chars if not skipped
-export const validateRoutineImprovement = (
-  data: v.InferOutput<typeof routineImprovementStepSchema>,
-): boolean => {
-  if (data.routineSkipped) return true;
-  const morningLength = data.morningRoutine?.length || 0;
-  const eveningLength = data.eveningRoutine?.length || 0;
-  return morningLength + eveningLength >= 30;
-};
 
 export type UploadStepData = v.InferOutput<typeof uploadStepSchema>;
 export type FillInfoStepData = v.InferOutput<typeof fillInfoStepSchema>;
