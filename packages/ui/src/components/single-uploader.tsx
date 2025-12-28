@@ -1,6 +1,7 @@
 import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from 'lucide-react';
 import { Button } from './button';
-import { FileUploadOptions, useFileUpload } from '#hooks/use-file-upload.js';
+import type { FileUploadOptions } from '#hooks/use-file-upload.js';
+import { useFileUpload } from '#hooks/use-file-upload.js';
 
 export interface SingleUploaderProps extends FileUploadOptions {}
 export default function Component(props: SingleUploaderProps) {
