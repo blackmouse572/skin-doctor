@@ -26,9 +26,15 @@ interface AnalyzeStepProps {
   data: SkinAnalysisData;
   onPrev: () => void;
   onSubmit: () => void;
+  isSubmitting?: boolean;
 }
 
-export function AnalyzeStep({ data, onPrev, onSubmit }: AnalyzeStepProps) {
+export function AnalyzeStep({
+  data,
+  onPrev,
+  onSubmit,
+  isSubmitting = false,
+}: AnalyzeStepProps) {
   useBlocker({
     shouldBlockFn: () => true,
     enableBeforeUnload: true,
@@ -148,9 +154,10 @@ export function AnalyzeStep({ data, onPrev, onSubmit }: AnalyzeStepProps) {
             description="Get personalized skin insights and recommendations powered by AI."
             icon={<MagicWand className="w-32 h-32" weight="fill" />}
             badge="AI POWERED"
-            actionLabel="Analyze Now"
+            actionLabel={isSubmitting ? 'Analyzing...' : 'Analyze Now'}
             onAction={onSubmit}
             buttonClassName="place-item-end"
+            disabled={isSubmitting}
           />
         </div>
       </FocusCardFooter>

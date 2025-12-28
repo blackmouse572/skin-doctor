@@ -1,5 +1,6 @@
 import { oc } from '@orpc/contract';
 import postContract from './posts';
+import skinAnalysisContract from './skin-analysis';
 
 export const appContract = oc
   .errors({
@@ -17,4 +18,5 @@ export const appContract = oc
   })
   .router({
     posts: postContract,
+    skinAnalysis: skinAnalysisContract,
   });

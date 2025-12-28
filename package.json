@@ -9,6 +9,8 @@
     "clean": "turbo run clean",
     "db:push": "turbo -F @repo/db push",
     "db:studio": "turbo -F @repo/db studio",
+    "db:gen": "turbo -F @repo/db generate-schema",
+    "db:migrate": "turbo -F @repo/db migrate",
     "dev": "turbo watch dev --continue",
     "dev:app": "turbo watch dev --continue --filter server --filter ai --filter web",
     "env:copy-example": "turbo run env:copy-example",

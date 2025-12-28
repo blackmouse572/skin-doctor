@@ -8,6 +8,9 @@ import {
   StepperTitle,
   StepperTrigger,
 } from '@repo/ui/components/stepper';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { apiClient } from '../../../clients/apiClient';
 import { AnalyzeStep } from './steps/analyze-step';
 import { FillInfoStep } from './steps/fill-info-step';
 import { RoutineImprovementStep } from './steps/routine-improvement-step';
@@ -35,6 +38,10 @@ function SkinAnalysisWizardContent() {
     skipToAnalyze,
     getCompleteData,
   } = useSkinAnalysisWizard();
+
+  const createSkinAnalysis = useMutation(
+    apiClient.skinAnalysis.create.mutationOptions(),
+  );
 
   const handleUploadNext = (data: typeof uploadData) => {
     if (data) {
@@ -78,13 +85,33 @@ function SkinAnalysisWizardContent() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const completeData = getCompleteData();
-    if (completeData) {
-      console.log('Submitting', completeData);
-      // Handle final submission
-      nextStep(); // Go to Result
+    if (!completeData) {
+      toast.error('Please complete all required steps');
+      return;
     }
+    toast.promise(
+      createSkinAnalysis
+        .mutateAsync({
+          description: completeData.fillInfo.description,
+          images: completeData.upload.images,
+          symptoms: completeData.fillInfo.symptoms,
+          duration: completeData.fillInfo.duration,
+          currentRoutine: completeData.fillInfo.currentRoutine,
+          morningRoutine: completeData.routineImprovement?.morningRoutine,
+          eveningRoutine: completeData.routineImprovement?.eveningRoutine,
+        })
+        .then((response) => {
+          return response;
+        }),
+      {
+        loading: 'Analyzing your skin...',
+        success: 'Skin analysis complete!',
+        error: (err) =>
+          err?.message || 'Failed to analyze skin. Please try again.',
+      },
+    );
   };
 
   const getCurrentStepTitle = () => {
@@ -222,6 +249,7 @@ function SkinAnalysisWizardContent() {
               }}
               onPrev={prevStep}
               onSubmit={handleSubmit}
+              isSubmitting={createSkinAnalysis.isPending}
             />
           )}
 
@@ -237,27 +265,188 @@ function SkinAnalysisWizardContent() {
               }}
               onPrev={prevStep}
               onSubmit={handleSubmit}
+              isSubmitting={createSkinAnalysis.isPending}
             />
           )}
 
-        {currentStep === 4 && !includesRoutineStep && (
-          <div className="w-full max-w-3xl">
-            <div className="bg-card text-card-foreground rounded-xl p-8 text-center border">
-              <h2 className="text-2xl font-bold mb-4">Analysis Complete!</h2>
-              <p className="text-muted-foreground">
-                Your skin analysis results will appear here.
-              </p>
-            </div>
-          </div>
-        )}
+        {currentStep === 4 &&
+          !includesRoutineStep &&
+          createSkinAnalysis.data && (
+            <div className="w-full max-w-3xl">
+              <div className="bg-card text-card-foreground rounded-xl p-8 border">
+                <h2 className="text-2xl font-bold mb-4 text-center">
+                  Analysis Complete!
+                </h2>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-primary/5 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        Health Point
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {createSkinAnalysis.data.data.summary.skin.healthPoint}
+                        /100
+                      </p>
+                    </div>
+                    <div className="bg-primary/5 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        Moisture Level
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {
+                          createSkinAnalysis.data.data.summary.skin
+                            .moistureLevel
+                        }
+                        /100
+                      </p>
+                    </div>
+                    <div className="bg-primary/5 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Skin Age</p>
+                      <p className="text-2xl font-bold">
+                        {createSkinAnalysis.data.data.summary.skin.skinAge}{' '}
+                        years
+                      </p>
+                    </div>
+                    <div className="bg-primary/5 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">Skin Type</p>
+                      <p className="text-2xl font-bold">
+                        {createSkinAnalysis.data.data.summary.skin.skinType}
+                      </p>
+                    </div>
+                  </div>
 
-        {currentStep === 5 && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Skin Concerns</h3>
+                    {createSkinAnalysis.data.data.summary.concerns.map(
+                      (concern: any, index: number) => (
+                        <div key={index} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold">{concern.type}</h4>
+                            <span
+                              className={`text-xs px-2 py-1 rounded ${
+                                concern.severity === 'high'
+                                  ? 'bg-red-100 text-red-700'
+                                  : concern.severity === 'medium'
+                                    ? 'bg-yellow-100 text-yellow-700'
+                                    : 'bg-green-100 text-green-700'
+                              }`}
+                            >
+                              {concern.severity}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {concern.description}
+                          </p>
+                          <div>
+                            <p className="text-sm font-medium mb-2">
+                              Recommendations:
+                            </p>
+                            <ul className="list-disc list-inside space-y-1">
+                              {concern.recommendations.map(
+                                (rec: string, i: number) => (
+                                  <li
+                                    key={i}
+                                    className="text-sm text-muted-foreground"
+                                  >
+                                    {rec}
+                                  </li>
+                                ),
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        {currentStep === 5 && createSkinAnalysis.data && (
           <div className="w-full max-w-3xl">
-            <div className="bg-card text-card-foreground rounded-xl p-8 text-center border">
-              <h2 className="text-2xl font-bold mb-4">Analysis Complete!</h2>
-              <p className="text-muted-foreground">
-                Your skin analysis results will appear here.
-              </p>
+            <div className="bg-card text-card-foreground rounded-xl p-8 border">
+              <h2 className="text-2xl font-bold mb-4 text-center">
+                Analysis Complete!
+              </h2>
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-primary/5 p-4 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
+                      Health Point
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {createSkinAnalysis.data.data.summary.skin.healthPoint}
+                      /100
+                    </p>
+                  </div>
+                  <div className="bg-primary/5 p-4 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
+                      Moisture Level
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {createSkinAnalysis.data.data.summary.skin.moistureLevel}
+                      /100
+                    </p>
+                  </div>
+                  <div className="bg-primary/5 p-4 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Skin Age</p>
+                    <p className="text-2xl font-bold">
+                      {createSkinAnalysis.data.data.summary.skin.skinAge} years
+                    </p>
+                  </div>
+                  <div className="bg-primary/5 p-4 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Skin Type</p>
+                    <p className="text-2xl font-bold">
+                      {createSkinAnalysis.data.data.summary.skin.skinType}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Skin Concerns</h3>
+                  {createSkinAnalysis.data.data.summary.concerns.map(
+                    (concern: any, index: number) => (
+                      <div key={index} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold">{concern.type}</h4>
+                          <span
+                            className={`text-xs px-2 py-1 rounded ${
+                              concern.severity === 'high'
+                                ? 'bg-red-100 text-red-700'
+                                : concern.severity === 'medium'
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : 'bg-green-100 text-green-700'
+                            }`}
+                          >
+                            {concern.severity}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {concern.description}
+                        </p>
+                        <div>
+                          <p className="text-sm font-medium mb-2">
+                            Recommendations:
+                          </p>
+                          <ul className="list-disc list-inside space-y-1">
+                            {concern.recommendations.map(
+                              (rec: string, i: number) => (
+                                <li
+                                  key={i}
+                                  className="text-sm text-muted-foreground"
+                                >
+                                  {rec}
+                                </li>
+                              ),
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}

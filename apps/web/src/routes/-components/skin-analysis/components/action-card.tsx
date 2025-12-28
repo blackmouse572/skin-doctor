@@ -15,6 +15,7 @@ interface ActionCardProps {
   iconContainerClassName?: string;
   buttonClassName?: string;
   footerSlot?: ReactNode;
+  disabled?: boolean;
 }
 
 export function ActionCard({
@@ -29,6 +30,7 @@ export function ActionCard({
   iconContainerClassName,
   buttonClassName,
   footerSlot,
+  disabled = false,
 }: ActionCardProps) {
   if (variant === 'primary') {
     return (
@@ -60,6 +62,7 @@ export function ActionCard({
               size="lg"
               className="w-full sm:w-auto self-end mt-2 bg-emerald-500 hover:bg-emerald-600 text-white border-none"
               onClick={onAction}
+              disabled={disabled}
             >
               {actionLabel}
               <ArrowRight className="ml-2 w-4 h-4" />
@@ -94,6 +97,7 @@ export function ActionCard({
           variant="secondary"
           className={cn('shadow mt-4', buttonClassName)}
           onClick={onAction}
+          disabled={disabled}
         >
           {actionLabel} <ArrowRight className="ml-2 w-4 h-4" />
         </Button>

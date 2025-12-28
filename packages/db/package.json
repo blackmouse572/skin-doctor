@@ -27,6 +27,8 @@
     "lint": "eslint",
     "push": "pnpm env:run drizzle-kit push",
     "studio": "pnpm env:run drizzle-kit studio",
+    "generate-schema": "pnpm env:run drizzle-kit generate",
+    "migrate": "pnpm env:run drizzle-kit migrate",
     "typecheck": "tsc --build --noEmit --emitDeclarationOnly false"
   },
   "prettier": "@repo/prettier-config",
