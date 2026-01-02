@@ -2,17 +2,21 @@ import { os, implement } from '@orpc/server';
 import type { AuthInstance } from '@repo/auth/server';
 import type { DatabaseInstance } from '@repo/db/client';
 import { appContract } from '../contracts';
+import { CloudClientInstance } from '@repo/cloud';
 
 export const createORPCContext = async ({
   auth,
   db,
   headers,
+  cloud,
 }: {
   auth: AuthInstance;
   db: DatabaseInstance;
   headers: Headers;
+  cloud: CloudClientInstance;
 }): Promise<{
   db: DatabaseInstance;
+  cloud: CloudClientInstance;
   session: AuthInstance['$Infer']['Session'] | null;
 }> => {
   const session = await auth.api.getSession({
@@ -21,6 +25,7 @@ export const createORPCContext = async ({
   return {
     db,
     session,
+    cloud,
   };
 };
 

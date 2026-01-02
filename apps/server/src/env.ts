@@ -20,6 +20,10 @@ export const envSchema = v.object({
   ),
   SERVER_AUTH_SECRET: v.pipe(v.string(), v.minLength(1)),
   SERVER_POSTGRES_URL: v.string(),
+  SERVER_CLOUD_URL: v.string(),
+  SERVER_CLOUD_API_KEY: v.string(),
+  SERVER_CLOUD_API_SECRET: v.string(),
+  SERVER_CLOUD_UPLOAD_PRESET: v.optional(v.string()),
 
   // Backend URL, used to configure OpenAPI (Scalar)
   PUBLIC_SERVER_URL: v.pipe(v.string(), v.url()),

@@ -4,10 +4,11 @@ import { OpenAPIHandler } from '@orpc/openapi/fetch';
 import { OpenAPIReferencePlugin } from '@orpc/openapi/plugins';
 import { StrictGetMethodPlugin } from '@orpc/server/plugins';
 import { experimental_ValibotToJsonSchemaConverter as ValibotToJsonSchemaConverter } from '@orpc/valibot';
+import type { AuthInstance } from '@repo/auth/server';
+import type { CloudClientInstance } from '@repo/cloud';
+import type { DatabaseInstance } from '@repo/db/client';
 import urlJoin from 'url-join';
 import * as v from 'valibot';
-import type { AuthInstance } from '@repo/auth/server';
-import type { DatabaseInstance } from '@repo/db/client';
 import { createORPCContext } from './orpc';
 import { appRouter } from './router';
 
@@ -16,11 +17,13 @@ export type AppRouter = typeof appRouter;
 export const createApi = ({
   auth,
   db,
+  cloud,
   serverUrl,
   apiPath,
 }: {
   auth: AuthInstance;
   db: DatabaseInstance;
+  cloud: CloudClientInstance;
   serverUrl: string;
   apiPath: `/${string}`;
 }) => {
@@ -28,12 +31,12 @@ export const createApi = ({
     plugins: [
       new StrictGetMethodPlugin(),
       new OpenAPIReferencePlugin({
-        docsTitle: 'RT Stack | API Reference',
+        docsTitle: 'Skin Doctor | API Reference',
         docsProvider: 'scalar',
         schemaConverters: [new ValibotToJsonSchemaConverter()],
         specGenerateOptions: {
           info: {
-            title: 'RT Stack API',
+            title: 'Skin Doctor API',
             version: '1.0.0',
           },
           servers: [{ url: urlJoin(serverUrl, apiPath) }],
@@ -69,6 +72,7 @@ export const createApi = ({
           db,
           auth,
           headers: request.headers,
+          cloud,
         }),
       });
     },

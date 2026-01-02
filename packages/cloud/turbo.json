@@ -1,0 +1,14 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      "env": ["CLOUD_*"],
+      "inputs": ["$TURBO_DEFAULT$", ".env"]
+    },
+    "build": {
+      "env": ["CLOUD_*"],
+      "inputs": ["$TURBO_DEFAULT$", ".env"]
+    }
+  }
+}

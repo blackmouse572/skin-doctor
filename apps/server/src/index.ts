@@ -1,5 +1,6 @@
 import { createApi } from '@repo/api/server';
 import { createAuth } from '@repo/auth/server';
+import { createCloudClient } from '@repo/cloud';
 import { createDb } from '@repo/db/client';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
@@ -12,6 +13,12 @@ import { generateRootHtml } from './utils';
 const trustedOrigins = [env.PUBLIC_WEB_URL].map((url) => new URL(url).origin);
 
 const db = createDb({ databaseUrl: env.SERVER_POSTGRES_URL });
+const cloud = createCloudClient({
+  api_key: env.SERVER_CLOUD_API_KEY,
+  api_secret: env.SERVER_CLOUD_API_SECRET,
+  cloud_name: env.SERVER_CLOUD_URL,
+  upload_preset: env.SERVER_CLOUD_UPLOAD_PRESET,
+});
 const auth = createAuth({
   webUrl: env.PUBLIC_WEB_URL,
   serverUrl: env.PUBLIC_SERVER_URL,
@@ -22,6 +29,7 @@ const auth = createAuth({
 const api = createApi({
   auth,
   db,
+  cloud,
   serverUrl: env.PUBLIC_SERVER_URL,
   apiPath: env.PUBLIC_SERVER_API_PATH,
 });

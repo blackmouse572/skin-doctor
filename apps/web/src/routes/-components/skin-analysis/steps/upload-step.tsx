@@ -80,41 +80,32 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
     validators: {
       onChange: uploadStepSchema,
       onChangeAsync: async ({ value }) => {
-        const fileToValidate = extractFileFromInput(value.images[0]);
-        if (!fileToValidate) {
-          return { images: 'Invalid file uploaded.' };
-        }
-        const results = await validateUploadedImage(fileToValidate).then(
-          (result) => {
-            if (result.issues.length > 0) {
-              return {
-                fields: {
-                  images: {
-                    message: result.issues.join(' '),
+        if (captureMode === 'camera') {
+          const fileToValidate = extractFileFromInput(value.images[0]);
+          if (!fileToValidate) {
+            return { images: 'Invalid file uploaded.' };
+          }
+          const results = await validateUploadedImage(fileToValidate).then(
+            (result) => {
+              if (result.issues.length > 0) {
+                return {
+                  fields: {
+                    images: {
+                      message: result.issues.join(' '),
+                    },
                   },
-                },
-              };
-            }
-            return;
-          },
-        );
+                };
+              }
+              return;
+            },
+          );
 
-        return results;
+          return results;
+        }
       },
     },
     onSubmit: async ({ value }) => {
-      // For camera mode, validation already happened during capture
-      // For upload mode, validate the uploaded image
-      if (captureMode === 'upload') {
-        const hasImages = value.images && value.images.length > 0;
-
-        if (!hasImages) {
-          toast.error('Please upload at least one image');
-          return;
-        }
-
-        onNext(value);
-      }
+      onNext(value);
     },
   });
 

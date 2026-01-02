@@ -2,7 +2,9 @@
 
 import { LockIcon } from '@phosphor-icons/react/dist/ssr';
 import { Card } from '@repo/ui/components/card';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+import { apiClient } from '../../../../clients/apiClient';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 interface UploadedImageProps {
   uploadedImage?: File | { preview?: string };
@@ -17,35 +19,43 @@ export function UploadedImage({
   className = '',
   children,
 }: UploadedImageProps) {
+  const urlQuery = useSuspenseQuery(
+    apiClient.images.getSignedUrl.queryOptions({
+      input: {
+        publicId:
+          typeof uploadedImage === 'object' && 'preview' in uploadedImage
+            ? uploadedImage.preview || ''
+            : '',
+      },
+      enabled:
+        !!uploadedImage &&
+        !(typeof uploadedImage === 'object' && 'preview' in uploadedImage),
+    }),
+  );
+
+  // Check if this is a public ID (from Cloudinary) or a local file
   const imageUrl = useMemo(() => {
     if (!uploadedImage) return null;
-    const fileWithPreview = uploadedImage as File & { preview?: string };
-    if (
-      fileWithPreview.preview &&
-      typeof fileWithPreview.preview === 'string'
-    ) {
-      return fileWithPreview.preview;
+
+    if (typeof uploadedImage === 'object' && 'preview' in uploadedImage) {
+      return urlQuery.data.url;
     }
-    if (uploadedImage instanceof File) {
+
+    if (typeof uploadedImage === 'object' && uploadedImage instanceof File) {
       return URL.createObjectURL(uploadedImage);
     }
+
     return null;
-  }, [uploadedImage]);
+  }, [uploadedImage, urlQuery.data]);
 
   return (
     <div className={`space-y-4 ${className}`}>
       <Card className="relative aspect-3/4 w-full overflow-hidden rounded-2xl border bg-muted shadow-sm space-y-0 py-0">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="Uploaded skin"
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-muted">
-            <p className="text-muted-foreground">No image uploaded</p>
-          </div>
-        )}
+        <img
+          src={imageUrl ?? ''}
+          alt="Uploaded skin"
+          className="h-full w-full object-cover"
+        />
 
         {children && (
           <div className="absolute bottom-4 left-4 right-4 flex justify-between text-white/80 font-medium pointer-events-auto items-center">

@@ -35,7 +35,15 @@ const skinAnalysisContract = oc
           }),
         },
       })
-      .input(v.object({ id: v.number() }))
+      .input(
+        v.object({
+          id: v.pipe(
+            v.string(),
+            v.transform((s) => parseInt(s, 10)),
+            v.number(),
+          ),
+        }),
+      )
       .output(
         v.object({
           id: v.number(),

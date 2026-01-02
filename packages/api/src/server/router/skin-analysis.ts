@@ -1,25 +1,43 @@
 import { eq } from '@repo/db';
 import { skinAnalysis } from '@repo/db/schema';
 import { protectedProcedure } from '../orpc';
+import { fromBodyToBase64Helper } from '../utils/image-upload-helper';
 
 const skinAnalysisRouter = {
   create: protectedProcedure.skinAnalysis.create.handler(
     async ({ context, input }) => {
-      console.log('create-skin-analysis');
-      // TODO: Upload images to cloud storage and get URLs
-      // For now, we'll use placeholder URLs
-      const imageUrls = input.images.map(
-        (_, index) => `https://placeholder.com/image-${index}.jpg`,
-      );
+      // Upload images to cloud storage with private token-based access
+      let imagePublicIds: string[] = [];
+      try {
+        const imageBuffers = await fromBodyToBase64Helper(
+          input.images.map((img) => img.file) as unknown as File[], // Type casting as File[] for helper function
+        );
+        const images = await Promise.all(
+          imageBuffers.map((image) =>
+            context.cloud.uploader.upload(image, {
+              folder: `skin_analysis/${context.session.user.id}`,
+              allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+              use_filename: true,
+              unique_filename: true,
+            }),
+          ),
+        );
 
-      console.log('image urls', imageUrls);
+        imagePublicIds = images.map((img) => img.public_id);
+      } catch (error) {
+        console.error('Error uploading images:', {
+          message: error instanceof Error ? error.message : String(error),
+          fullError: error,
+        });
+        throw new Error('Image upload failed');
+      }
 
       // Insert the analysis record into the database
       const [analysis] = await context.db
         .insert(skinAnalysis)
         .values({
           userId: context.session.user.id,
-          imageUrls,
+          imageUrls: imagePublicIds,
           symptoms: input.symptoms,
           description: input.description,
           morningRoutine: input.morningRoutine,
@@ -31,11 +49,11 @@ const skinAnalysisRouter = {
           console.error('Error inserting skin analysis:', error);
           throw error;
         });
-      console.log('Analyusis', analysis);
-
       if (!analysis) {
         throw new Error('Failed to create skin analysis');
       }
+
+      console.log('Analysis created:', analysis.id);
 
       // TODO: Trigger AI analysis job asynchronously
       // For now, we'll return mock data
@@ -88,7 +106,7 @@ const skinAnalysisRouter = {
         data: {
           analysisId: analysis.id,
           summary: {
-            images: imageUrls,
+            images: imagePublicIds,
             ...mockAnalysisResult,
           },
         },
@@ -111,6 +129,8 @@ const skinAnalysisRouter = {
           },
         });
       }
+
+      // Return public IDs only - client will fetch signed URLs via /images/getSignedUrl endpoint
 
       return {
         id: analysis.id,

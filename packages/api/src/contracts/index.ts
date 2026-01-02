@@ -1,4 +1,5 @@
 import { oc } from '@orpc/contract';
+import imagesContract from './images';
 import postContract from './posts';
 import skinAnalysisContract from './skin-analysis';
 
@@ -19,4 +20,5 @@ export const appContract = oc
   .router({
     posts: postContract,
     skinAnalysis: skinAnalysisContract,
+    images: imagesContract,
   });

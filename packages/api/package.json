@@ -31,6 +31,7 @@
     "@orpc/valibot": "catalog:",
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
+    "@repo/cloud": "workspace:*",
     "url-join": "catalog:",
     "valibot": "catalog:"
   },
