@@ -1,11 +1,10 @@
-import { Toaster } from '@repo/ui/components/sonner';
-import { TanStackDevtools } from '@tanstack/react-devtools';
-import { Outlet, createRootRoute } from '@tanstack/react-router';
-import React from 'react';
 import { authClient } from '@/clients/authClient';
 import Spinner from '@/routes/-components/common/spinner';
 import NavContainer from '@/routes/-components/layout/nav/nav-container';
-import { Navbar } from '@/routes/-components/layout/nav/navbar';
+import { Toaster } from '@repo/ui/components/sonner';
+import { Outlet, createRootRoute } from '@tanstack/react-router';
+import React from 'react';
+import { NuqsAdapter } from 'nuqs/adapters/tanstack-router';
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -21,7 +20,7 @@ const TanStackRouterDevtools = import.meta.env.PROD
     );
 
 function RootComponent() {
-  const { data: session, isPending } = authClient.useSession();
+  const { isPending } = authClient.useSession();
 
   if (isPending) {
     return (
@@ -32,12 +31,12 @@ function RootComponent() {
   }
 
   return (
-    <>
+    <NuqsAdapter>
       <Toaster />
       <Outlet />
       <React.Suspense>
         <TanStackRouterDevtools position="bottom-right" />
       </React.Suspense>
-    </>
+    </NuqsAdapter>
   );
 }

@@ -1,3 +1,4 @@
+import { useQueryState, parseAsStringLiteral } from 'nuqs';
 import {
   CameraIcon as Camera,
   CheckCircleIcon as CheckCircle,
@@ -26,6 +27,7 @@ import {
   validateUploadedImage,
   type ImageValidationResult,
 } from '../utils/validate-image';
+import { FieldError } from '@repo/ui/components/field';
 
 interface UploadStepProps {
   initialData?: UploadStepData;
@@ -59,12 +61,17 @@ function extractFileFromInput(input: any): File | null {
 
   return null;
 }
-
+const captureModeLiteral = ['upload', 'camera'] as const;
 export function UploadStep({ initialData, onNext }: UploadStepProps) {
-  const [captureMode, setCaptureMode] = useState<'upload' | 'camera'>('camera');
-  const [isValidating, setIsValidating] = useState(false);
+  const [captureMode, setCaptureMode] = useQueryState(
+    'c',
+    parseAsStringLiteral(captureModeLiteral).withDefault('camera'),
+  );
   const [validationResult, setValidationResult] =
     useState<ImageValidationResult | null>(null);
+  const [capturedImagePreview, setCapturedImagePreview] = useState<
+    string | null
+  >(null);
 
   const form = useForm({
     defaultValues: {
@@ -72,6 +79,28 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
     } as UploadStepData,
     validators: {
       onChange: uploadStepSchema,
+      onChangeAsync: async ({ value }) => {
+        const fileToValidate = extractFileFromInput(value.images[0]);
+        if (!fileToValidate) {
+          return { images: 'Invalid file uploaded.' };
+        }
+        const results = await validateUploadedImage(fileToValidate).then(
+          (result) => {
+            if (result.issues.length > 0) {
+              return {
+                fields: {
+                  images: {
+                    message: result.issues.join(' '),
+                  },
+                },
+              };
+            }
+            return;
+          },
+        );
+
+        return results;
+      },
     },
     onSubmit: async ({ value }) => {
       // For camera mode, validation already happened during capture
@@ -84,57 +113,6 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
           return;
         }
 
-        setIsValidating(true);
-
-        try {
-          // Extract File object from the uploaded image
-          const fileToValidate = extractFileFromInput(value.images[0]);
-
-          if (!fileToValidate) {
-            // If we can't extract a file, skip validation and proceed
-            console.warn(
-              'Unable to extract File object for validation. Proceeding without validation.',
-            );
-            setIsValidating(false);
-            onNext(value);
-            return;
-          }
-
-          // Validate the uploaded image
-          const result = await validateUploadedImage(fileToValidate);
-          setValidationResult(result);
-
-          // Show validation feedback
-          if (result.issues.length > 0) {
-            toast.error('Image Quality Issues', {
-              description: result.issues[0],
-              icon: (
-                <WarningCircleIcon weight="fill" className="text-red-500" />
-              ),
-            });
-          } else if (result.warnings.length > 0) {
-            toast.warning('Image Quality Warning', {
-              description: result.warnings[0],
-              icon: <Warning weight="fill" className="text-yellow-500" />,
-            });
-          }
-
-          // Allow proceeding even with warnings, but not with critical issues
-          if (result.issues.length === 0) {
-            setIsValidating(false);
-            onNext(value);
-          }
-        } catch (error) {
-          console.error('Validation error:', error);
-          setIsValidating(false);
-          // If validation fails, allow user to proceed
-          toast.warning(
-            'Unable to validate image quality automatically. Proceeding...',
-          );
-          setTimeout(() => onNext(value), 1000);
-        }
-      } else {
-        // Camera mode: validation already passed
         onNext(value);
       }
     },
@@ -151,7 +129,6 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
       issues: [],
       warnings: [],
     });
-    toast.success('Photo captured successfully! All quality checks passed.');
   };
 
   const handleCameraError = (error: Error) => {
@@ -232,14 +209,34 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
                 {(field) => (
                   <>
                     {captureMode === 'camera' ? (
-                      <CameraCapture
-                        key={`camera-${captureMode}`}
-                        onCapture={(file) => {
-                          handleCameraCapture(file);
-                          field.handleChange([file] as any);
-                        }}
-                        onError={handleCameraError}
-                      />
+                      <div className="space-y-4">
+                        {capturedImagePreview ? (
+                          <div className="relative rounded-xl overflow-hidden border-2 border-green-500 bg-black">
+                            <img
+                              src={capturedImagePreview}
+                              alt="Captured preview"
+                              className="w-full h-auto"
+                            />
+                          </div>
+                        ) : (
+                          <CameraCapture
+                            key={`camera-${captureMode}`}
+                            onCapture={(file) => {
+                              handleCameraCapture(file);
+                              field.handleChange([file] as any);
+                              // Create preview
+                              const reader = new FileReader();
+                              reader.onload = (e) => {
+                                setCapturedImagePreview(
+                                  e.target?.result as string,
+                                );
+                              };
+                              reader.readAsDataURL(file);
+                            }}
+                            onError={handleCameraError}
+                          />
+                        )}
+                      </div>
                     ) : (
                       <div className="space-y-4">
                         <SingleUploader
@@ -251,23 +248,12 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
                         />
                         {field.state.value && field.state.value.length > 0 && (
                           <>
-                            <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 flex items-start gap-2">
-                              <WarningCircleIcon
-                                weight="fill"
-                                className="w-4 h-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5"
-                              />
-                              <p className="text-xs text-yellow-700 dark:text-yellow-300">
-                                <strong>Note:</strong> Uploaded photos will be
-                                validated for face detection and lighting
-                                quality before proceeding. For best real-time
-                                feedback, use camera mode.
-                              </p>
-                            </div>
                             {validationResult && (
                               <ValidationFeedback result={validationResult} />
                             )}
                           </>
                         )}
+                        <FieldError errors={field.state.meta.errors} />
                       </div>
                     )}
                   </>
@@ -282,17 +268,10 @@ export function UploadStep({ initialData, onNext }: UploadStepProps) {
                 children={(canSubmit) => (
                   <Button
                     type="submit"
-                    disabled={!canSubmit || isValidating}
+                    disabled={!canSubmit}
                     className="w-full sm:w-auto min-w-[200px]"
                   >
-                    {isValidating ? (
-                      <>
-                        <span className="animate-spin mr-2">⏳</span>
-                        Validating...
-                      </>
-                    ) : (
-                      'Next Step'
-                    )}
+                    Next Step
                   </Button>
                 )}
               />

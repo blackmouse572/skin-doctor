@@ -231,6 +231,13 @@ export function CameraCapture({
     }
   };
 
+  const allChecksPass = metrics.allChecksPass;
+  const hasWarnings =
+    status.face.status === 'warning' ||
+    status.lighting.status === 'warning' ||
+    status.angle.status === 'warning' ||
+    status.distance.status === 'warning';
+
   // Show loading state only if camera is still loading and no error
   if (isLoadingCamera && !cameraError && !videoRef.current?.srcObject) {
     return (
@@ -326,13 +333,6 @@ export function CameraCapture({
       </div>
     );
   }
-
-  const allChecksPass = metrics.allChecksPass;
-  const hasWarnings =
-    status.face.status === 'warning' ||
-    status.lighting.status === 'warning' ||
-    status.angle.status === 'warning' ||
-    status.distance.status === 'warning';
 
   return (
     <div className="space-y-4">

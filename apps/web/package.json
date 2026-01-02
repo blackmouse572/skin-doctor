@@ -34,6 +34,7 @@
     "framer-motion": "^12.23.24",
     "immer": "^11.1.0",
     "next-themes": "catalog:",
+    "nuqs": "^2.8.6",
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "^3.6.0",
